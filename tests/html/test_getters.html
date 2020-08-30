@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Getters test page</title>
+  </head>
+  <body>
+    <h1 id="heading" name="heading">Heading</h1>
+    <p id="para-1" class="para" name="para-1">Paragraph 1</p>
+    <p id="para-2" class="para" name="para-2">Paragraph 2</p>
+    <div class="container">
+      <p id="para-3" class="para" name="para-3">Paragraph 3</p>
+      <a href="https://pypi.org" id="pypi-link" class="link">
+        Python Package Index (PyPI)
+      </a>
+    </div>
+    <br/>
+    <button onclick="addParagraphAfterDelay()">Add paragraph</button>
+  </body>
+  <script>
+    function addParagraphAfterDelay() {
+      setTimeout(function() {
+        var fourthPara = document.createElement("p");
+        fourthPara.setAttribute("id", "para-4");
+        var textNode = document.createTextNode("Paragraph 4");
+        fourthPara.appendChild(textNode);
+        var thirdPara = document.getElementById("para-3");
+        thirdPara.insertAdjacentElement('afterend',fourthPara);
+      }, 1000);
+    }
+  </script>
+</html>

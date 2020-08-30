@@ -1,0 +1,6 @@
+include *.rst
+include *.txt
+include LICENCE
+include Makefile
+include tox.ini
+include tests/html/*.html

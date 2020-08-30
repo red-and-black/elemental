@@ -1,0 +1,10 @@
+# Directories
+__pycache__/
+.tox/
+build/
+dist/
+elemental.egg-info/
+
+# Files
+.coverage
+geckodriver.log

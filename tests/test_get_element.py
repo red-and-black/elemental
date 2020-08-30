@@ -1,0 +1,176 @@
+import pytest
+
+from elemental import exceptions
+from tests import utilities
+
+
+@pytest.fixture
+def test_getters_page(browser):
+    url = utilities.build_url("test_getters.html")
+    browser.selenium_webdriver.get(url)
+
+
+@pytest.mark.usefixtures("test_getters_page")
+class TestGetElement:
+
+    def test_by_class_name(self, browser):
+        element = browser.get_element(class_name="link")
+        actual = element.selenium_webelement.text
+        assert actual == "Python Package Index (PyPI)"
+
+    def test_by_css_selector(self, browser):
+        element = browser.get_element(css_selector="div.container p")
+        assert element.selenium_webelement.text == "Paragraph 3"
+
+    def test_by_id(self, browser):
+        element = browser.get_element(id="heading")
+        assert element.selenium_webelement.text == "Heading"
+
+    def test_by_link_text(self, browser):
+        element = browser.get_element(link_text="Python Package Index (PyPI)")
+        actual = element.selenium_webelement.text
+        assert actual == "Python Package Index (PyPI)"
+
+    def test_by_name(self, browser):
+        element = browser.get_element(name="para-1")
+        assert element.selenium_webelement.text == "Paragraph 1"
+
+    def test_by_partial_link_text(self, browser):
+        element = browser.get_element(partial_link_text="PyPI")
+        actual = element.selenium_webelement.text
+        assert actual == "Python Package Index (PyPI)"
+
+    def test_by_tag_name(self, browser):
+        element = browser.get_element(tag_name="a")
+        actual = element.selenium_webelement.text
+        assert actual == "Python Package Index (PyPI)"
+
+    def test_by_xpath(self, browser):
+        element = browser.get_element(xpath="//*[@id='para-2']")
+        assert element.selenium_webelement.text == "Paragraph 2"
+
+    def test_chaining(self, browser):
+        element = browser.\
+            get_element(class_name="container").\
+            get_element(tag_name="p")
+        assert element.selenium_webelement.text == "Paragraph 3"
+
+    def test_no_waiting(self, browser):
+        element = browser.get_element(id="heading", wait=0)
+        assert element.selenium_webelement.text == "Heading"
+
+    def test_occurrence(self, browser):
+        element = browser.get_element(tag_name="p", occurrence=3)
+        assert element.selenium_webelement.text == "Paragraph 3"
+
+    def test_waiting(self, browser):
+        browser.selenium_webdriver.find_element_by_tag_name("button").click()
+        element = browser.get_element(id="para-4")
+        assert element.selenium_webelement.text == "Paragraph 4"
+
+
+@pytest.mark.usefixtures("test_getters_page")
+class TestGetElementErrors:
+
+    def test_forbidden_occurrence(self, browser):
+        with pytest.raises(exceptions.ParameterError) as error:
+            browser.get_element(id="heading", occurrence=0)
+        expected = "The 'occurrence' parameter cannot be less than 1"
+        assert str(error.value) == expected
+
+    def test_forbidden_wait(self, browser):
+        with pytest.raises(exceptions.ParameterError) as error:
+            browser.get_element(id="heading", wait=-2)
+        expected = "The 'wait' parameter cannot be less than 0"
+        assert str(error.value) == expected
+
+    def test_insufficient_parameters(self, browser):
+        with pytest.raises(exceptions.ParameterError) as error:
+            browser.get_element()
+        expected = (
+            "One parameter from this list is required: class_name, "
+            "css_selector, id, link_text, name, partial_link_text, tag_name, "
+            "xpath"
+        )
+        assert str(error.value) == expected
+
+    def test_nonexistent_element(self, browser):
+        # Without specifying the occurrence.
+        with pytest.raises(exceptions.NoSuchElementError) as error:
+            browser.get_element(id="abc", wait=0)
+        expected = "Element not found: id=\"abc\""
+        assert str(error.value) == expected
+
+        # Specifying an occurrence.
+        with pytest.raises(exceptions.NoSuchElementError) as error:
+            browser.get_element(id="heading", occurrence=2, wait=0)
+        expected = "Element not found: id=\"heading\", occurrence=2"
+        assert str(error.value) == expected
+
+    def test_noninteger_occurrence(self, browser):
+        with pytest.raises(exceptions.ParameterError) as error:
+            browser.get_element(id="heading", occurrence="abc")
+        expected = "The 'occurrence' parameter must be an integer"
+        assert str(error.value) == expected
+
+    def test_noninteger_wait(self, browser):
+        with pytest.raises(exceptions.ParameterError) as error:
+            browser.get_element(id="heading", wait="abc")
+        expected = "The 'wait' parameter must be an integer"
+        assert str(error.value) == expected
+
+    def test_too_many_parameters(self, browser):
+        with pytest.raises(exceptions.ParameterError) as error:
+            browser.get_element(tag_name="a", class_name="link")
+        expected = (
+            "Only one parameter from this list is allowed: class_name, "
+            "css_selector, id, link_text, name, partial_link_text, tag_name, "
+            "xpath"
+        )
+        assert str(error.value) == expected
+
+    def test_unrecognised_parameter(self, browser):
+        # No recognised parameters, one unrecognised parameter.
+        with pytest.raises(exceptions.ParameterError) as error:
+            browser.get_element(bad_parameter=2)
+        expected = "These parameters are not recognised: bad_parameter"
+        assert str(error.value) == expected
+
+        # No recognised parameters, multiple unrecognised parameters.
+        with pytest.raises(exceptions.ParameterError) as error:
+            browser.get_element(bad_parameter=2, other_bad_parameter="abc")
+        expected = (
+            "These parameters are not recognised: bad_parameter, "
+            "other_bad_parameter"
+        )
+        assert str(error.value) == expected
+
+        # One recognised parameter.
+        with pytest.raises(exceptions.ParameterError) as error:
+            browser.get_element(tag_name="a", bad_parameter=2)
+        expected = "These parameters are not recognised: bad_parameter"
+        assert str(error.value) == expected
+
+        # Multiple recognised parameters.
+        with pytest.raises(exceptions.ParameterError) as error:
+            browser.get_element(
+                tag_name="a",
+                class_name="link",
+                bad_parameter=2,
+            )
+        expected = "These parameters are not recognised: bad_parameter"
+        assert str(error.value) == expected
+
+        # Multiple recognised and unrecognised parameters.
+        with pytest.raises(exceptions.ParameterError) as error:
+            browser.get_element(
+                tag_name="a",
+                class_name="link",
+                bad_parameter=2,
+                other_bad_parameter="abc",
+            )
+        expected = (
+            "These parameters are not recognised: bad_parameter, "
+            "other_bad_parameter"
+        )
+        assert str(error.value) == expected
