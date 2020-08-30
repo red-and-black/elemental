@@ -58,7 +58,7 @@ push:
 	@git push origin v`python setup.py --version`
 
 release:
-	@git add CHANGELOG.rst elemental/__init__.py
+	@git add CHANGELOG.rst docs/source/conf.py elemental/__init__.py
 	@git commit -m "Release v`python setup.py --version`"
 	@git tag \
 		-a v`python setup.py --version` \

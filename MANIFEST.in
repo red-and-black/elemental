@@ -3,4 +3,6 @@ include *.txt
 include LICENCE
 include Makefile
 include tox.ini
+include docs/*
 include tests/html/*.html
+
