@@ -35,6 +35,7 @@ lint:
 	@pylint *.py
 	@pylint elemental/.
 	@pylint \
+		--disable=duplicate-code \
 		--disable=missing-class-docstring \
 		--disable=missing-function-docstring \
 		--disable=no-self-use \

@@ -1,4 +1,4 @@
-# pylint: disable=missing-function-docstring,too-few-public-methods
+# pylint: disable=missing-function-docstring
 from elemental import (
     actions,
     getters,
@@ -10,6 +10,9 @@ class Common:
 
     def get_element(self, **kwargs):  # noqa: D102
         return getters.get_element(self, **kwargs)
+
+    def get_elements(self, **kwargs):  # noqa: D102
+        return getters.get_elements(self, **kwargs)
 
 
 class Browser(Common):

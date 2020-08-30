@@ -53,18 +53,13 @@ def get_element(parent, occurrence=1, wait=5, **kwargs):
     _validate_integer_parameter("occurrence", occurrence, 1)
     _validate_integer_parameter("wait", wait, 0)
 
-    # Prepare to find the Selenium element.
-    finder_type, finder_value = list(kwargs.items())[0]
-    find_by = finder_type.replace("_", " ")
-    selenium_parent = _get_selenium_parent(parent)
-
-    # Wait until either enough matching Selenium elements are found or the wait
-    # time runs out.
-    end_time = time.time() + wait
-    selenium_webelements = selenium_parent.find_elements(find_by, finder_value)
-    while len(selenium_webelements) < occurrence and end_time > time.time():
-        selenium_webelements = selenium_parent.\
-            find_elements(find_by, finder_value)
+    # Get all matching Selenium elements.
+    selenium_webelements = _get_selenium_webelements(
+        parent,
+        kwargs,
+        occurrence,
+        wait,
+    )
 
     # Get the Selenium element if it is in the Selenium elements found or raise
     # an exception.
@@ -72,6 +67,7 @@ def get_element(parent, occurrence=1, wait=5, **kwargs):
         index = occurrence - 1
         selenium_webelement = selenium_webelements[index]
     else:
+        finder_type, finder_value = list(kwargs.items())[0]
         error = (
             "Element not found: {}=\"{}\"".format(finder_type, finder_value)
         )
@@ -80,6 +76,60 @@ def get_element(parent, occurrence=1, wait=5, **kwargs):
         raise exceptions.NoSuchElementError(error)
 
     return _create_element(parent, selenium_webelement)
+
+
+def get_elements(parent, min_elements=1, wait=5, **kwargs):
+    """Get a list of elements from a webpage.
+
+    This is a wrapper for the family of functions built on Selenium's
+    WebDriver.find_elements() and WebElement.find_elements().
+
+    Parameters
+    ----------
+    parent : browser or element
+        The browser or element.
+    min_elements : int, optional
+        The minimum number of elements which must be found to return before the
+        wait time expires.
+    wait : int, optional
+        The time to wait, in seconds, for the elements to be found.
+    **kwargs
+        One and only one keyword argument must be supplied. Allowed keys
+        are: "class_name", "css_selector", "id", "link_text", "name",
+        "partial_link_text", "tag_name", "xpath",
+
+    Returns
+    -------
+    list of element
+        A list of the selected HTML elements, each packaged in an Elemental
+        element. An empty list if none are found.
+
+    Raises
+    ------
+    ParameterError
+        When called with incorrect parameters or parameter values.
+
+    """
+    # Validate parameters.
+    _validate_kwargs(kwargs)
+    _validate_integer_parameter("min_elements", min_elements, 1)
+    _validate_integer_parameter("wait", wait, 0)
+
+    # Get all matching Selenium elements.
+    selenium_webelements = _get_selenium_webelements(
+        parent,
+        kwargs,
+        min_elements,
+        wait,
+    )
+
+    # Create the elements.
+    elements = []
+    for selenium_webelement in selenium_webelements:
+        element = _create_element(parent, selenium_webelement)
+        elements.append(element)
+
+    return elements
 
 
 def _create_element(parent, selenium_webelement):
@@ -101,6 +151,43 @@ def _create_element(parent, selenium_webelement):
     element_class = parent.element_class
     selenium_webdriver = parent.selenium_webdriver
     return element_class(selenium_webdriver, selenium_webelement)
+
+
+def _get_selenium_webelements(parent, kwargs, min_elements, wait):
+    """Get all Selenium elements matching the kwargs.
+
+    Parameters
+    ----------
+    parent : browser or element
+        The browser or element.
+    kwargs : dict
+        Keyword arguments.
+    min_elements : int, optional
+        The minimum number of elements which must be found to return before the
+        wait time expires.
+    wait : int, optional
+        The time to wait, in seconds, for the elements to be found.
+
+    Returns
+    -------
+    list of webelement
+        A list of Selenium webelements. An empty list if none are found.
+
+    """
+    # Prepare to find the matching Selenium elements.
+    finder_type, finder_value = list(kwargs.items())[0]
+    find_by = finder_type.replace("_", " ")
+    selenium_parent = _get_selenium_parent(parent)
+
+    # Wait until either enough matching Selenium elements are found or the wait
+    # time runs out.
+    end_time = time.time() + wait
+    selenium_webelements = selenium_parent.find_elements(find_by, finder_value)
+    while len(selenium_webelements) < min_elements and end_time > time.time():
+        selenium_webelements = selenium_parent.\
+            find_elements(find_by, finder_value)
+
+    return selenium_webelements
 
 
 def _get_selenium_parent(parent):
