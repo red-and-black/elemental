@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>States testing page</title>
+  </head>
+  <body>
+    <form>
+      <label for="marsupials">Marsupial type</label>
+      <br/>
+      <select id="marsupials" name="marsupials">
+        <option id="kangaroo" value="Kangaroo">Kangaroo</option>
+        <option id="wallaby" value="Wallaby">Wallaby</option>
+        <option id="wombat" value="Wombat" disabled>Wombat</option>
+      </select>
+      <br/>
+      <p>Colours</p>
+      <input type="radio" id="blue" name="colour" value="blue">
+      <label for="blue">Blue</label>
+      <input type="radio" id="purple" name="colour" value="purple">
+      <label for="purple">Purple</label>
+      <input type="radio" id="green" name="colour" value="green" disabled>
+      <label for="green">Green</label>
+      <input type="radio" id="orange" name="colour" value="orange" hidden>
+      <label for="orange">Orange</label>
+      <br/>
+      <p>Checkboxes</p>
+      <input type="checkbox" id="checking" name"checking">
+      <label for="checking">I want this box checked</label>
+      <br/>
+      <br/>
+      <input type="checkbox" id="terms" name"terms" disabled>
+      <label for="terms">I agree to the terms</label>
+      <p id="hiding" hidden>This is hidden text</p>
+    </form>
+  </body>
+</html>

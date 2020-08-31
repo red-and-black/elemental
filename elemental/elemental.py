@@ -2,6 +2,7 @@
 from elemental import (
     actions,
     getters,
+    states,
 )
 
 
@@ -70,3 +71,15 @@ class Element(Common):
         self.element_class = Element
         self.selenium_webdriver = selenium_webdriver
         self.selenium_webelement = selenium_webelement
+
+    @property
+    def is_displayed(self):  # noqa: D102
+        return states.is_displayed(self)
+
+    @property
+    def is_enabled(self):  # noqa: D102
+        return states.is_enabled(self)
+
+    @property
+    def is_selected(self):  # noqa: D102
+        return states.is_selected(self)
