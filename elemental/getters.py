@@ -10,7 +10,9 @@ FINDER_KEYS = [
     "link_text",
     "name",
     "partial_link_text",
+    "partial_text",
     "tag_name",
+    "text",
     "xpath",
 ]
 
@@ -33,7 +35,7 @@ def get_element(parent, occurrence=1, wait=5, **kwargs):
     **kwargs
         One and only one keyword argument must be supplied. Allowed keys
         are: "class_name", "css_selector", "id", "link_text", "name",
-        "partial_link_text", "tag_name", "xpath",
+        "partial_link_text", "partial_text", "tag_name", "text", "xpath".
 
     Returns
     -------
@@ -96,7 +98,7 @@ def get_elements(parent, min_elements=1, wait=5, **kwargs):
     **kwargs
         One and only one keyword argument must be supplied. Allowed keys
         are: "class_name", "css_selector", "id", "link_text", "name",
-        "partial_link_text", "tag_name", "xpath",
+        "partial_link_text", "partial_text", "tag_name", "text", "xpath".
 
     Returns
     -------
@@ -153,6 +155,47 @@ def _create_element(parent, selenium_webelement):
     return element_class(selenium_webdriver, selenium_webelement)
 
 
+def _find_with_selenium(parent, finder_type, finder_value):
+    """Find Selenium webelements.
+
+    Parameters
+    ----------
+    parent : browser or element
+        The browser or element.
+    finder_type : str
+        One of the FINDER_KEYS.
+    finder_value: str
+        The value to match elements on.
+
+    Returns
+    -------
+    list of webelement
+        A list of Selenium webelements. An empty list if none are found.
+
+    """
+    # Handle the 'partial_text' and 'text' finder types using xpaths, as they
+    # are not built in to Selenium. The xpath expressions ignore the contents
+    # of script tags so as to not pick up false positives from JavaScript code.
+    if finder_type in ["partial_text", "text"]:
+        prefix = "./" if isinstance(parent, parent.element_class) else "//"
+        if finder_type == "partial_text":
+            finder_value = (
+                "{}*[contains(text(), '{}')][not(self::script)]"
+                .format(prefix, finder_value)
+            )
+        elif finder_type == "text":
+            finder_value = (
+                "{}*[normalize-space(text())='{}'][not(self::script)]"
+                .format(prefix, finder_value)
+            )
+        finder_type = "xpath"
+
+    selenium_parent = _get_selenium_parent(parent)
+    selenium_find_by = finder_type.replace("_", " ")
+
+    return selenium_parent.find_elements(selenium_find_by, finder_value)
+
+
 def _get_selenium_webelements(parent, kwargs, min_elements, wait):
     """Get all Selenium elements matching the kwargs.
 
@@ -176,16 +219,21 @@ def _get_selenium_webelements(parent, kwargs, min_elements, wait):
     """
     # Prepare to find the matching Selenium elements.
     finder_type, finder_value = list(kwargs.items())[0]
-    find_by = finder_type.replace("_", " ")
-    selenium_parent = _get_selenium_parent(parent)
 
     # Wait until either enough matching Selenium elements are found or the wait
     # time runs out.
     end_time = time.time() + wait
-    selenium_webelements = selenium_parent.find_elements(find_by, finder_value)
+    selenium_webelements = _find_with_selenium(
+        parent,
+        finder_type,
+        finder_value,
+    )
     while len(selenium_webelements) < min_elements and end_time > time.time():
-        selenium_webelements = selenium_parent.\
-            find_elements(find_by, finder_value)
+        selenium_webelements = _find_with_selenium(
+            parent,
+            finder_type,
+            finder_value,
+        )
 
     return selenium_webelements
 

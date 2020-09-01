@@ -43,15 +43,41 @@ class TestGetElements:
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == ["Python Package Index (PyPI)", "Python.org"]
 
+    def test_by_partial_text(self, browser):
+        elements = browser.get_elements(partial_text="Paragraph")
+        contents = [element.selenium_webelement.text for element in elements]
+        assert contents == ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
+
     def test_by_tag_name(self, browser):
         elements = browser.get_elements(tag_name="p")
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
 
+    def test_by_text(self, browser):
+        elements = browser.get_elements(text="Python.org")
+        contents = [element.selenium_webelement.text for element in elements]
+        assert contents == ["Python.org"]
+
     def test_by_xpath(self, browser):
         elements = browser.get_elements(xpath="//*[@class='para']")
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
+
+    def test_chaining(self, browser):
+        # Ensure that 'partial_text' finds from the element and not the page
+        # root.
+        elements = browser.\
+            get_element(class_name="container").\
+            get_elements(partial_text="Paragraph")
+        contents = [element.selenium_webelement.text for element in elements]
+        assert contents == ["Paragraph 3"]
+
+        # Ensure that 'text' finds from the element and not the page root.
+        elements = browser.\
+            get_element(class_name="container").\
+            get_elements(text="Paragraph 3")
+        contents = [element.selenium_webelement.text for element in elements]
+        assert contents == ["Paragraph 3"]
 
     def test_large_min_elements(self, browser):
         elements = browser.get_elements(tag_name="p", min_elements=5, wait=0)
@@ -109,8 +135,8 @@ class TestGetElementsErrors:
             browser.get_elements()
         expected = (
             "One parameter from this list is required: class_name, "
-            "css_selector, id, link_text, name, partial_link_text, tag_name, "
-            "xpath"
+            "css_selector, id, link_text, name, partial_link_text, "
+            "partial_text, tag_name, text, xpath"
         )
         assert str(error.value) == expected
 
@@ -131,8 +157,8 @@ class TestGetElementsErrors:
             browser.get_elements(tag_name="a", class_name="link")
         expected = (
             "Only one parameter from this list is allowed: class_name, "
-            "css_selector, id, link_text, name, partial_link_text, tag_name, "
-            "xpath"
+            "css_selector, id, link_text, name, partial_link_text, "
+            "partial_text, tag_name, text, xpath"
         )
         assert str(error.value) == expected
 

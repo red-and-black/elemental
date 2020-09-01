@@ -40,19 +40,35 @@ class TestGetElement:
         actual = element.selenium_webelement.text
         assert actual == "Python Package Index (PyPI)"
 
+    def test_by_partial_text(self, browser):
+        element = browser.get_element(partial_text="Paragraph", occurrence=2)
+        assert element.selenium_webelement.text == "Paragraph 2"
+
     def test_by_tag_name(self, browser):
         element = browser.get_element(tag_name="a")
         actual = element.selenium_webelement.text
         assert actual == "Python Package Index (PyPI)"
+
+    def test_by_text(self, browser):
+        element = browser.get_element(text="Python.org")
+        assert element.selenium_webelement.text == "Python.org"
 
     def test_by_xpath(self, browser):
         element = browser.get_element(xpath="//*[@id='para-2']")
         assert element.selenium_webelement.text == "Paragraph 2"
 
     def test_chaining(self, browser):
+        # Ensure that 'partial_text' finds from the element and not the page
+        # root.
         element = browser.\
             get_element(class_name="container").\
-            get_element(tag_name="p")
+            get_element(partial_text="Paragraph")
+        assert element.selenium_webelement.text == "Paragraph 3"
+
+        # Ensure that 'text' finds from the element and not the page root.
+        element = browser.\
+            get_element(class_name="container").\
+            get_element(text="Paragraph 3")
         assert element.selenium_webelement.text == "Paragraph 3"
 
     def test_no_waiting(self, browser):
@@ -89,8 +105,8 @@ class TestGetElementErrors:
             browser.get_element()
         expected = (
             "One parameter from this list is required: class_name, "
-            "css_selector, id, link_text, name, partial_link_text, tag_name, "
-            "xpath"
+            "css_selector, id, link_text, name, partial_link_text, "
+            "partial_text, tag_name, text, xpath"
         )
         assert str(error.value) == expected
 
@@ -124,8 +140,8 @@ class TestGetElementErrors:
             browser.get_element(tag_name="a", class_name="link")
         expected = (
             "Only one parameter from this list is allowed: class_name, "
-            "css_selector, id, link_text, name, partial_link_text, tag_name, "
-            "xpath"
+            "css_selector, id, link_text, name, partial_link_text, "
+            "partial_text, tag_name, text, xpath"
         )
         assert str(error.value) == expected
 
