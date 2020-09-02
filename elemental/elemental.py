@@ -15,6 +15,9 @@ class Common:
     def get_elements(self, **kwargs):  # noqa: D102
         return getters.get_elements(self, **kwargs)
 
+    def screenshot(self, filepath):  # noqa: D102
+        actions.screenshot(self, filepath)
+
 
 class Browser(Common):
     """Represents a web browser.
@@ -72,6 +75,15 @@ class Element(Common):
         self.selenium_webdriver = selenium_webdriver
         self.selenium_webelement = selenium_webelement
 
+    def check(self):  # noqa: D102
+        actions.check(self)
+
+    def click(self):  # noqa: D102
+        actions.click(self)
+
+    def fill(self, string):  # noqa: D102
+        actions.fill(self, string)
+
     @property
     def is_displayed(self):  # noqa: D102
         return states.is_displayed(self)
@@ -83,3 +95,9 @@ class Element(Common):
     @property
     def is_selected(self):  # noqa: D102
         return states.is_selected(self)
+
+    def select(self):  # noqa: D102
+        actions.select(self)
+
+    def uncheck(self):  # noqa: D102
+        actions.uncheck(self)

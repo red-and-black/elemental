@@ -4,5 +4,45 @@
     <title>Actions test page</title>
   </head>
   <body>
+    <p>Inputs</p>
+    <label for="text_input">Input some text</label>
+    <input type="text" id="text_input" name"text_input">
+    <br/>
+    <p>Checkboxes</p>
+    <input type="checkbox" id="checking" name"checking">
+    <label for="checking">This box starts unchecked</label>
+    <br/>
+    <input type="checkbox" id="unchecking" name"unchecking" checked>
+    <label for="unchecking">This box starts checked</label>
+    <br/>
+    <p>Radio buttons</p>
+    <input type="radio" id="radio_one" name="radio" value="radio_one">
+    <label for="radio">Radio One</label>
+    <input type="radio" id="radio_two" name="radio" value="radio_two">
+    <label for="radio">Radio Two</label>
+    <br/>
+    <br/>
+    <div id="screenshot">
+      <label for="select">Select</label>
+      <br/>
+      <select id="select" name="select">
+        <option id="kangaroo" value="Kangaroo">Kangaroo</option>
+        <option id="wallaby" value="Wallaby">Wallaby</option>
+        <option id="wombat" value="Wombat">Wombat</option>
+      </select>
+    </div>
+    <br/>
+    <br/>
+    <button id="button" onclick="addParagraph()">Add paragraph</button>
   </body>
+  <script>
+    function addParagraph() {
+        var fourthPara = document.createElement("p");
+        fourthPara.setAttribute("id", "para-4");
+        var textNode = document.createTextNode("Paragraph 4");
+        fourthPara.appendChild(textNode);
+        var button = document.getElementById("button");
+        button.insertAdjacentElement('afterend',fourthPara);
+    }
+  </script>
 </html>
