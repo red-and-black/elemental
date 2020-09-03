@@ -3,7 +3,16 @@ import time
 from elemental import exceptions
 
 
-FINDER_KEYS = [
+BUTTON_FINDER_KEYS = [
+    "class_name",
+    "id",
+    "partial_text",
+    "text",
+    "type",
+]
+
+
+ELEMENT_FINDER_KEYS = [
     "class_name",
     "css",
     "id",
@@ -16,6 +25,60 @@ FINDER_KEYS = [
     "type",
     "xpath",
 ]
+
+
+def get_button(parent, occurrence=1, wait=5, **kwargs):
+    """Get a button from a webpage.
+
+    Parameters
+    ----------
+    parent : browser or element
+        The browser or element.
+    occurrence : int, optional
+        The occurrence to get. For instance, if multiple buttons on the page
+        meet the requirements and the 3rd one is required, set this to 3.
+    wait : int, optional
+        The time to wait, in seconds, for the button to be found.
+    **kwargs
+        One and only one keyword argument must be supplied. Allowed keys are:
+        "class_name", "id", "partial_text", "text", "type".
+
+    Returns
+    -------
+    element
+        The selected button packaged in an Elemental element.
+
+    Raises
+    ------
+    NoSuchElementError
+        When the button cannot be found.
+    ParameterError
+        When called with incorrect parameters or parameter values.
+
+    """
+    # Validate parameters.
+    _validate_kwargs(kwargs, BUTTON_FINDER_KEYS)
+    _validate_integer_parameter("occurrence", occurrence, 1)
+    _validate_integer_parameter("wait", wait, 0)
+
+    # Get all matching Selenium elements.
+    button_kwargs = _build_button_kwargs(parent, kwargs)
+    selenium_webelements = _get_selenium_webelements(
+        parent,
+        button_kwargs,
+        occurrence,
+        wait,
+    )
+
+    # Get the Selenium element if it is in the Selenium elements found or raise
+    # an exception.
+    if len(selenium_webelements) >= occurrence:
+        index = occurrence - 1
+        selenium_webelement = selenium_webelements[index]
+    else:
+        _raise_no_such_element_error("Button", kwargs, occurrence)
+
+    return _create_element(parent, selenium_webelement)
 
 
 def get_element(parent, occurrence=1, wait=5, **kwargs):
@@ -52,7 +115,7 @@ def get_element(parent, occurrence=1, wait=5, **kwargs):
 
     """
     # Validate parameters.
-    _validate_kwargs(kwargs)
+    _validate_kwargs(kwargs, ELEMENT_FINDER_KEYS)
     _validate_integer_parameter("occurrence", occurrence, 1)
     _validate_integer_parameter("wait", wait, 0)
 
@@ -70,13 +133,7 @@ def get_element(parent, occurrence=1, wait=5, **kwargs):
         index = occurrence - 1
         selenium_webelement = selenium_webelements[index]
     else:
-        finder_type, finder_value = list(kwargs.items())[0]
-        error = (
-            "Element not found: {}=\"{}\"".format(finder_type, finder_value)
-        )
-        if occurrence != 1:
-            error = "{}, occurrence={}".format(error, occurrence)
-        raise exceptions.NoSuchElementError(error)
+        _raise_no_such_element_error("Element", kwargs, occurrence)
 
     return _create_element(parent, selenium_webelement)
 
@@ -114,7 +171,7 @@ def get_elements(parent, min_elements=1, wait=5, **kwargs):
 
     """
     # Validate parameters.
-    _validate_kwargs(kwargs)
+    _validate_kwargs(kwargs, ELEMENT_FINDER_KEYS)
     _validate_integer_parameter("min_elements", min_elements, 1)
     _validate_integer_parameter("wait", wait, 0)
 
@@ -133,6 +190,64 @@ def get_elements(parent, min_elements=1, wait=5, **kwargs):
         elements.append(element)
 
     return elements
+
+
+def _build_button_kwargs(parent, kwargs):
+    """Make an dictionary containing an xpath expression to find a button.
+
+    Parameters
+    ----------
+    parent : browser or element
+        The browser or element.
+    kwargs : dict
+        Keyword arguments.
+
+    Returns
+    -------
+    dict
+        A dict in the form {"xpath": <xpath_expression>}.
+
+    """
+    prefix = _build_xpath_prefix(parent)
+    finder_type, finder_value = list(kwargs.items())[0]
+
+    if finder_type == "class_name":
+        xpath = "{}button[@class='{}']".format(prefix, finder_value)
+    elif finder_type == "id":
+        xpath = "{}button[@id='{}']".format(prefix, finder_value)
+    elif finder_type == "partial_text":
+        xpath = (
+            "{}button[contains(string(), '{}')]".format(prefix, finder_value)
+        )
+    elif finder_type == "text":
+        xpath = (
+            "{}button[normalize-space(string())='{}']"
+            .format(prefix, finder_value)
+        )
+    elif finder_type == "type":
+        xpath = "{}button[@type='{}']".format(prefix, finder_value)
+
+    return {"xpath": xpath}
+
+
+def _build_xpath_prefix(parent):
+    """Make the prefix for an xpath expression.
+
+    The prefix of an xpath expression determines whether it operates relative
+    to an element ("./") or the document root ("//").
+
+    Parameters
+    ----------
+    parent : browser or element
+        The browser or element.
+
+    Returns
+    -------
+    Str
+        Either "./" or "//".
+
+    """
+    return "./" if isinstance(parent, parent.element_class) else "//"
 
 
 def _create_element(parent, selenium_webelement):
@@ -164,7 +279,7 @@ def _find_with_selenium(parent, finder_type, finder_value):
     parent : browser or element
         The browser or element.
     finder_type : str
-        One of the FINDER_KEYS.
+        One of the ELEMENT_FINDER_KEYS.
     finder_value: str
         The value to match elements on.
 
@@ -178,7 +293,7 @@ def _find_with_selenium(parent, finder_type, finder_value):
     # are not built in to Selenium. The xpath expressions ignore the contents
     # of script tags so as to not pick up false positives from JavaScript code.
     if finder_type in ["partial_text", "text", "type"]:
-        prefix = "./" if isinstance(parent, parent.element_class) else "//"
+        prefix = _build_xpath_prefix(parent)
         if finder_type == "partial_text":
             finder_value = (
                 "{}*[contains(text(), '{}')][not(self::script)]"
@@ -270,6 +385,39 @@ def _get_selenium_parent(parent):
     return parent.selenium_webdriver
 
 
+def _raise_no_such_element_error(element_type, kwargs, occurrence):
+    """Raise a NoSuchElementError.
+
+    Parameters
+    ----------
+    element_type : str
+        The type of element which was being searched for. For example:
+        "Button".
+    kwargs : dict
+        Keyword arguments used to search.
+    occurrence : int
+        The element occurrence which was being searched for.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    NoSuchElementError
+
+    """
+    finder_type, finder_value = list(kwargs.items())[0]
+    error = (
+        "{} not found: {}=\"{}\""
+        .format(element_type, finder_type, finder_value)
+    )
+    if occurrence != 1:
+        error = "{}, occurrence={}".format(error, occurrence)
+
+    raise exceptions.NoSuchElementError(error)
+
+
 def _validate_integer_parameter(name, value, min_value):
     """Validate a parameter which receives an integer.
 
@@ -299,13 +447,15 @@ def _validate_integer_parameter(name, value, min_value):
         )
 
 
-def _validate_kwargs(kwargs):
+def _validate_kwargs(kwargs, finder_keys):
     """Validate the kwargs.
 
     Parameters
     ----------
     kwargs : dict
         Keyword arguments.
+    finder_keys : list of str
+        Allowed keyword argument keys.
 
     Raises
     ------
@@ -313,7 +463,7 @@ def _validate_kwargs(kwargs):
         When there are too many kwargs, or unrecognised or bad kwargs.
 
     """
-    unrecognised_keys = [key for key in kwargs if key not in FINDER_KEYS]
+    unrecognised_keys = [key for key in kwargs if key not in finder_keys]
     if unrecognised_keys:
         raise exceptions.ParameterError(
             "These parameters are not recognised: {}"
@@ -322,10 +472,10 @@ def _validate_kwargs(kwargs):
     if len(kwargs) == 0:
         raise exceptions.ParameterError(
             "One parameter from this list is required: {}"
-            .format(", ".join(sorted(FINDER_KEYS))),
+            .format(", ".join(sorted(finder_keys))),
         )
     if len(kwargs) > 1:
         raise exceptions.ParameterError(
             "Only one parameter from this list is allowed: {}"
-            .format(", ".join(sorted(FINDER_KEYS))),
+            .format(", ".join(sorted(finder_keys))),
         )

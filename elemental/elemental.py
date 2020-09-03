@@ -10,6 +10,9 @@ from elemental import (
 class Common:
     """Base class to hold methods shared by the Browser and Element classes."""
 
+    def get_button(self, **kwargs):  # noqa: D102
+        return getters.get_button(self, **kwargs)
+
     def get_element(self, **kwargs):  # noqa: D102
         return getters.get_element(self, **kwargs)
 

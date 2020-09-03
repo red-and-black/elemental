@@ -61,7 +61,7 @@ class TestGetElements:
     def test_by_type(self, browser):
         elements = browser.get_elements(type="button")
         contents = [element.selenium_webelement.text for element in elements]
-        assert contents == ["Add paragraph"]
+        assert contents == ["Add paragraph", "Add paragraph (secondary)"]
 
     def test_by_xpath(self, browser):
         elements = browser.get_elements(xpath="//*[@class='para']")

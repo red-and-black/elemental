@@ -20,7 +20,17 @@
       </a>
     </div>
     <br/>
-    <button type="button" onclick="addParagraph()">Add paragraph</button>
+    <button id="add-button" class="primary" type="button"
+      onclick="addParagraph()">
+      <i class="fa fa-star"></i>
+      Add paragraph
+    </button>
+    <div class="container">
+      <button class="secondary" type="button" onclick="addParagraph()">
+        <i class="fa fa-star"></i>
+        Add paragraph (secondary)
+      </button>
+    </div>
   </body>
   <script>
     function addParagraph() {
