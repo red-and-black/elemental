@@ -17,7 +17,7 @@ class TestIsDisplayed:
         assert not browser.get_element(id="hiding").is_displayed
 
         # Test a displayed element.
-        assert browser.get_element(tag_name="p").is_displayed
+        assert browser.get_element(tag="p").is_displayed
 
     def test_radio_button(self, browser):
         # Test a hidden element.

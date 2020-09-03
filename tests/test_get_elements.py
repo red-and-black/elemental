@@ -18,8 +18,8 @@ class TestGetElements:
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == ["Python Package Index (PyPI)", "Python.org"]
 
-    def test_by_css_selector(self, browser):
-        elements = browser.get_elements(css_selector="div.container a")
+    def test_by_css(self, browser):
+        elements = browser.get_elements(css="div.container a")
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == ["Python Package Index (PyPI)", "Python.org"]
 
@@ -48,8 +48,8 @@ class TestGetElements:
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
 
-    def test_by_tag_name(self, browser):
-        elements = browser.get_elements(tag_name="p")
+    def test_by_tag(self, browser):
+        elements = browser.get_elements(tag="p")
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
 
@@ -80,18 +80,18 @@ class TestGetElements:
         assert contents == ["Paragraph 3"]
 
     def test_large_min_elements(self, browser):
-        elements = browser.get_elements(tag_name="p", min_elements=5, wait=0)
+        elements = browser.get_elements(tag="p", min_elements=5, wait=0)
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
 
     def test_min_elements(self, browser):
-        elements = browser.get_elements(tag_name="p", min_elements=3)
+        elements = browser.get_elements(tag="p", min_elements=3)
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
 
     def test_min_elements_with_wait(self, browser):
         browser.selenium_webdriver.find_element_by_tag_name("button").click()
-        elements = browser.get_elements(tag_name="p", min_elements=4)
+        elements = browser.get_elements(tag="p", min_elements=4)
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == [
             "Paragraph 1",
@@ -134,9 +134,9 @@ class TestGetElementsErrors:
         with pytest.raises(exceptions.ParameterError) as error:
             browser.get_elements()
         expected = (
-            "One parameter from this list is required: class_name, "
-            "css_selector, id, link_text, name, partial_link_text, "
-            "partial_text, tag_name, text, xpath"
+            "One parameter from this list is required: class_name, css, id, "
+            "link_text, name, partial_link_text, partial_text, tag, text, "
+            "xpath"
         )
         assert str(error.value) == expected
 
@@ -154,19 +154,19 @@ class TestGetElementsErrors:
 
     def test_too_many_parameters(self, browser):
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_elements(tag_name="a", class_name="link")
+            browser.get_elements(tag="a", class_name="link")
         expected = (
-            "Only one parameter from this list is allowed: class_name, "
-            "css_selector, id, link_text, name, partial_link_text, "
-            "partial_text, tag_name, text, xpath"
+            "Only one parameter from this list is allowed: class_name, css, "
+            "id, link_text, name, partial_link_text, partial_text, tag, text, "
+            "xpath"
         )
         assert str(error.value) == expected
 
     def test_unrecognised_parameter(self, browser):
         # No recognised parameters, one unrecognised parameter.
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_elements(bad_parameter=2)
-        expected = "These parameters are not recognised: bad_parameter"
+            browser.get_elements(tag_name="p")
+        expected = "These parameters are not recognised: tag_name"
         assert str(error.value) == expected
 
         # No recognised parameters, multiple unrecognised parameters.
@@ -180,24 +180,20 @@ class TestGetElementsErrors:
 
         # One recognised parameter.
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_elements(tag_name="a", bad_parameter=2)
+            browser.get_elements(tag="a", bad_parameter=2)
         expected = "These parameters are not recognised: bad_parameter"
         assert str(error.value) == expected
 
         # Multiple recognised parameters.
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_elements(
-                tag_name="a",
-                class_name="link",
-                bad_parameter=2,
-            )
+            browser.get_elements(tag="a", class_name="link", bad_parameter=2)
         expected = "These parameters are not recognised: bad_parameter"
         assert str(error.value) == expected
 
         # Multiple recognised and unrecognised parameters.
         with pytest.raises(exceptions.ParameterError) as error:
             browser.get_elements(
-                tag_name="a",
+                tag="a",
                 class_name="link",
                 bad_parameter=2,
                 other_bad_parameter="abc",

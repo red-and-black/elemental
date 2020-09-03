@@ -31,7 +31,7 @@ class TestIsSelected:
         assert element.is_selected
 
     def test_paragraph(self, browser):
-        assert not browser.get_element(tag_name="p").is_selected
+        assert not browser.get_element(tag="p").is_selected
 
     def test_radio_button(self, browser):
         # Test element which isn't selected.

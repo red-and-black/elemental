@@ -18,8 +18,8 @@ class TestGetElement:
         actual = element.selenium_webelement.text
         assert actual == "Python Package Index (PyPI)"
 
-    def test_by_css_selector(self, browser):
-        element = browser.get_element(css_selector="div.container p")
+    def test_by_css(self, browser):
+        element = browser.get_element(css="div.container p")
         assert element.selenium_webelement.text == "Paragraph 3"
 
     def test_by_id(self, browser):
@@ -44,8 +44,8 @@ class TestGetElement:
         element = browser.get_element(partial_text="Paragraph", occurrence=2)
         assert element.selenium_webelement.text == "Paragraph 2"
 
-    def test_by_tag_name(self, browser):
-        element = browser.get_element(tag_name="a")
+    def test_by_tag(self, browser):
+        element = browser.get_element(tag="a")
         actual = element.selenium_webelement.text
         assert actual == "Python Package Index (PyPI)"
 
@@ -76,7 +76,7 @@ class TestGetElement:
         assert element.selenium_webelement.text == "Heading"
 
     def test_occurrence(self, browser):
-        element = browser.get_element(tag_name="p", occurrence=3)
+        element = browser.get_element(tag="p", occurrence=3)
         assert element.selenium_webelement.text == "Paragraph 3"
 
     def test_waiting(self, browser):
@@ -104,9 +104,9 @@ class TestGetElementErrors:
         with pytest.raises(exceptions.ParameterError) as error:
             browser.get_element()
         expected = (
-            "One parameter from this list is required: class_name, "
-            "css_selector, id, link_text, name, partial_link_text, "
-            "partial_text, tag_name, text, xpath"
+            "One parameter from this list is required: class_name, css, id, "
+            "link_text, name, partial_link_text, partial_text, tag, text, "
+            "xpath"
         )
         assert str(error.value) == expected
 
@@ -137,19 +137,19 @@ class TestGetElementErrors:
 
     def test_too_many_parameters(self, browser):
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_element(tag_name="a", class_name="link")
+            browser.get_element(tag="a", class_name="link")
         expected = (
-            "Only one parameter from this list is allowed: class_name, "
-            "css_selector, id, link_text, name, partial_link_text, "
-            "partial_text, tag_name, text, xpath"
+            "Only one parameter from this list is allowed: class_name, css, "
+            "id, link_text, name, partial_link_text, partial_text, tag, text, "
+            "xpath"
         )
         assert str(error.value) == expected
 
     def test_unrecognised_parameter(self, browser):
         # No recognised parameters, one unrecognised parameter.
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_element(bad_parameter=2)
-        expected = "These parameters are not recognised: bad_parameter"
+            browser.get_element(tag_name=2)
+        expected = "These parameters are not recognised: tag_name"
         assert str(error.value) == expected
 
         # No recognised parameters, multiple unrecognised parameters.
@@ -163,24 +163,20 @@ class TestGetElementErrors:
 
         # One recognised parameter.
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_element(tag_name="a", bad_parameter=2)
+            browser.get_element(tag="a", bad_parameter=2)
         expected = "These parameters are not recognised: bad_parameter"
         assert str(error.value) == expected
 
         # Multiple recognised parameters.
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_element(
-                tag_name="a",
-                class_name="link",
-                bad_parameter=2,
-            )
+            browser.get_element(tag="a", class_name="link", bad_parameter=2)
         expected = "These parameters are not recognised: bad_parameter"
         assert str(error.value) == expected
 
         # Multiple recognised and unrecognised parameters.
         with pytest.raises(exceptions.ParameterError) as error:
             browser.get_element(
-                tag_name="a",
+                tag="a",
                 class_name="link",
                 bad_parameter=2,
                 other_bad_parameter="abc",

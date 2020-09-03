@@ -5,13 +5,13 @@ from elemental import exceptions
 
 FINDER_KEYS = [
     "class_name",
-    "css_selector",
+    "css",
     "id",
     "link_text",
     "name",
     "partial_link_text",
     "partial_text",
-    "tag_name",
+    "tag",
     "text",
     "xpath",
 ]
@@ -33,9 +33,9 @@ def get_element(parent, occurrence=1, wait=5, **kwargs):
     wait : int, optional
         The time to wait, in seconds, for the element to be found.
     **kwargs
-        One and only one keyword argument must be supplied. Allowed keys
-        are: "class_name", "css_selector", "id", "link_text", "name",
-        "partial_link_text", "partial_text", "tag_name", "text", "xpath".
+        One and only one keyword argument must be supplied. Allowed keys are:
+        "class_name", "css", "id", "link_text", "name", "partial_link_text",
+        "partial_text", "tag", "text", "xpath".
 
     Returns
     -------
@@ -96,9 +96,9 @@ def get_elements(parent, min_elements=1, wait=5, **kwargs):
     wait : int, optional
         The time to wait, in seconds, for the elements to be found.
     **kwargs
-        One and only one keyword argument must be supplied. Allowed keys
-        are: "class_name", "css_selector", "id", "link_text", "name",
-        "partial_link_text", "partial_text", "tag_name", "text", "xpath".
+        One and only one keyword argument must be supplied. Allowed keys are:
+        "class_name", "css", "id", "link_text", "name", "partial_link_text",
+        "partial_text", "tag", "text", "xpath".
 
     Returns
     -------
@@ -188,10 +188,18 @@ def _find_with_selenium(parent, finder_type, finder_value):
                 "{}*[normalize-space(text())='{}'][not(self::script)]"
                 .format(prefix, finder_value)
             )
-        finder_type = "xpath"
+        selenium_find_by = "xpath"
+    # Translate the 'css' finder type to its Selenium equivalent.
+    elif finder_type == "css":
+        selenium_find_by = "css selector"
+    # Translate the 'tag' finder type to its Selenium equivalent.
+    elif finder_type == "tag":
+        selenium_find_by = "tag name"
+    # Translate any other finder type to its Selenium equivalent.
+    else:
+        selenium_find_by = finder_type.replace("_", " ")
 
     selenium_parent = _get_selenium_parent(parent)
-    selenium_find_by = finder_type.replace("_", " ")
 
     return selenium_parent.find_elements(selenium_find_by, finder_value)
 
