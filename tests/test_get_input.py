@@ -11,126 +11,128 @@ def test_getters_page(browser):
 
 
 @pytest.mark.usefixtures("test_getters_page")
-class TestGetButton:
+class TestGetInput:
 
     def test_by_class_name(self, browser):
-        element = browser.get_button(class_name="primary")
-        assert element.selenium_webelement.text == "Add paragraph"
+        element = browser.get_input(class_name="input")
+        actual = element.selenium_webelement.get_attribute("placeholder")
+        assert actual == "Placeholder 1"
 
     def test_by_id(self, browser):
-        element = browser.get_button(id="add-button")
-        assert element.selenium_webelement.text == "Add paragraph"
+        element = browser.get_input(id="input-2")
+        actual = element.selenium_webelement.get_attribute("placeholder")
+        assert actual == "Placeholder 2"
 
-    def test_by_partial_text(self, browser):
-        element = browser.get_button(partial_text="Add")
-        assert element.selenium_webelement.text == "Add paragraph"
+    def test_by_label(self, browser):
+        element = browser.get_input(label="Input 1")
+        actual = element.selenium_webelement.get_attribute("placeholder")
+        assert actual == "Placeholder 1"
 
-    def test_by_text(self, browser):
-        element = browser.get_button(text="Add paragraph (secondary)")
-        assert element.selenium_webelement.text == "Add paragraph (secondary)"
-
-    def test_by_type(self, browser):
-        element = browser.get_button(type="button")
-        assert element.selenium_webelement.text == "Add paragraph"
+    def test_by_placeholder(self, browser):
+        element = browser.get_input(placeholder="Placeholder 2")
+        actual = element.selenium_webelement.get_attribute("placeholder")
+        assert actual == "Placeholder 2"
 
     def test_chaining(self, browser):
-        # Ensure that the button is found by partial_text from the element and
-        # not the page root.
+        # Ensure that the input is found from the element and not the page
+        # root.
         element = browser.\
-            get_element(class_name="container", occurrence=4).\
-            get_button(partial_text="paragraph")
-        assert element.selenium_webelement.text == "Add paragraph (secondary)"
-
-        # Ensure that the button is found by text from the element and not the
-        # page root.
-        element = browser.\
-            get_element(class_name="container", occurrence=4).\
-            get_button(text="Add paragraph (secondary)")
-        assert element.selenium_webelement.text == "Add paragraph (secondary)"
+            get_element(class_name="container", occurrence=3).\
+            get_input(label="Input 2")
+        actual = element.selenium_webelement.get_attribute("placeholder")
+        assert actual == "Placeholder 2"
 
     def test_no_waiting(self, browser):
-        element = browser.get_button(id="add-button", wait=0)
-        assert element.selenium_webelement.text == "Add paragraph"
+        element = browser.get_input(id="input-1", wait=0)
+        actual = element.selenium_webelement.get_attribute("placeholder")
+        assert actual == "Placeholder 1"
 
     def test_occurrence(self, browser):
-        element = browser.get_button(partial_text="para", occurrence=2)
-        assert element.selenium_webelement.text == "Add paragraph (secondary)"
+        element = browser.get_input(class_name="input", occurrence=2)
+        actual = element.selenium_webelement.get_attribute("placeholder")
+        assert actual == "Placeholder 2"
 
 
 @pytest.mark.usefixtures("test_getters_page")
-class TestGetButtonErrors:
+class TestGetInputErrors:
 
     def test_forbidden_occurrence(self, browser):
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_button(id="add-button", occurrence=0)
+            browser.get_input(id="input-1", occurrence=0)
         expected = "The 'occurrence' parameter cannot be less than 1"
         assert str(error.value) == expected
 
     def test_forbidden_wait(self, browser):
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_button(id="add-button", wait=-2)
+            browser.get_input(id="input-1", wait=-2)
         expected = "The 'wait' parameter cannot be less than 0"
         assert str(error.value) == expected
 
     def test_insufficient_parameters(self, browser):
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_button()
+            browser.get_input()
         expected = (
-            "One parameter from this list is required: class_name, id, "
-            "partial_text, text, type"
+            "One parameter from this list is required: class_name, id, label, "
+            "placeholder"
         )
         assert str(error.value) == expected
 
-    def test_nonbutton_element(self, browser):
+    def test_label_without_input(self, browser):
         with pytest.raises(exceptions.NoSuchElementError) as error:
-            browser.get_button(id="para-2", wait=0)
-        expected = "Button not found: id=\"para-2\""
+            browser.get_input(label="Label with no input", wait=0)
+        expected = "Input not found: label=\"Label with no input\""
+        assert str(error.value) == expected
+
+    def test_noninput_element(self, browser):
+        with pytest.raises(exceptions.NoSuchElementError) as error:
+            browser.get_input(id="input-3", wait=0)
+        expected = "Input not found: id=\"input-3\""
         assert str(error.value) == expected
 
     def test_nonexistent_element(self, browser):
         # Without specifying the occurrence.
         with pytest.raises(exceptions.NoSuchElementError) as error:
-            browser.get_button(id="abc", wait=0)
-        expected = "Button not found: id=\"abc\""
+            browser.get_input(id="abc", wait=0)
+        expected = "Input not found: id=\"abc\""
         assert str(error.value) == expected
 
         # Specifying an occurrence.
         with pytest.raises(exceptions.NoSuchElementError) as error:
-            browser.get_button(id="add-button", occurrence=2, wait=0)
-        expected = "Button not found: id=\"add-button\", occurrence=2"
+            browser.get_input(id="input-1", occurrence=2, wait=0)
+        expected = "Input not found: id=\"input-1\", occurrence=2"
         assert str(error.value) == expected
 
     def test_noninteger_occurrence(self, browser):
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_button(id="add-button", occurrence="abc")
+            browser.get_input(id="input-1", occurrence="abc")
         expected = "The 'occurrence' parameter must be an integer"
         assert str(error.value) == expected
 
     def test_noninteger_wait(self, browser):
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_button(id="add-button", wait="abc")
+            browser.get_input(id="input-1", wait="abc")
         expected = "The 'wait' parameter must be an integer"
         assert str(error.value) == expected
 
     def test_too_many_parameters(self, browser):
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_button(class_name="primary", id="add-button")
+            browser.get_input(class_name="primary", id="input-1")
         expected = (
             "Only one parameter from this list is allowed: class_name, id, "
-            "partial_text, text, type"
+            "label, placeholder"
         )
         assert str(error.value) == expected
 
     def test_unrecognised_parameter(self, browser):
         # No recognised parameters, one unrecognised parameter.
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_button(tag_name=2)
+            browser.get_input(tag_name=2)
         expected = "These parameters are not recognised: tag_name"
         assert str(error.value) == expected
 
         # No recognised parameters, multiple unrecognised parameters.
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_button(bad_parameter=2, other_bad_parameter="abc")
+            browser.get_input(bad_parameter=2, other_bad_parameter="abc")
         expected = (
             "These parameters are not recognised: bad_parameter, "
             "other_bad_parameter"
@@ -139,15 +141,15 @@ class TestGetButtonErrors:
 
         # One recognised parameter.
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_button(type="button", bad_parameter=2)
+            browser.get_input(class_name="input", bad_parameter=2)
         expected = "These parameters are not recognised: bad_parameter"
         assert str(error.value) == expected
 
         # Multiple recognised parameters.
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_button(
+            browser.get_input(
                 class_name="primary",
-                type="button",
+                id="input-2",
                 bad_parameter=2,
             )
         expected = "These parameters are not recognised: bad_parameter"
@@ -155,9 +157,9 @@ class TestGetButtonErrors:
 
         # Multiple recognised and unrecognised parameters.
         with pytest.raises(exceptions.ParameterError) as error:
-            browser.get_button(
+            browser.get_input(
                 class_name="primary",
-                type="button",
+                id="input-2",
                 bad_parameter=2,
                 other_bad_parameter="abc",
             )

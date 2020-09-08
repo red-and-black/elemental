@@ -19,6 +19,9 @@ class Common:
     def get_elements(self, **kwargs):  # noqa: D102
         return getters.get_elements(self, **kwargs)
 
+    def get_input(self, **kwargs):  # noqa: D102
+        return getters.get_input(self, **kwargs)
+
     @property
     def html(self):  # noqa: D102
         return values.html(self)

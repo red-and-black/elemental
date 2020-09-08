@@ -27,6 +27,14 @@ ELEMENT_FINDER_KEYS = [
 ]
 
 
+INPUT_FINDER_KEYS = [
+    "class_name",
+    "id",
+    "label",
+    "placeholder",
+]
+
+
 def get_button(parent, occurrence=1, wait=5, **kwargs):
     """Get a button from a webpage.
 
@@ -192,6 +200,71 @@ def get_elements(parent, min_elements=1, wait=5, **kwargs):
     return elements
 
 
+def get_input(parent, occurrence=1, wait=5, **kwargs):
+    """Get an input from a webpage.
+
+    Parameters
+    ----------
+    parent : browser or element
+        The browser or element.
+    occurrence : int, optional
+        The occurrence to get. For instance, if multiple inputs on the page
+        meet the requirements and the 3rd one is required, set this to 3.
+    wait : int, optional
+        The time to wait, in seconds, for the input to be found.
+    **kwargs
+        One and only one keyword argument must be supplied. Allowed keys are:
+        "class_name", "id", "label", "placeholder".
+
+    Returns
+    -------
+    element
+        The selected input packaged in an Elemental element.
+
+    Raises
+    ------
+    NoSuchElementError
+        When the input cannot be found.
+    ParameterError
+        When called with incorrect parameters or parameter values.
+
+    """
+    # Validate parameters.
+    _validate_kwargs(kwargs, INPUT_FINDER_KEYS)
+    _validate_integer_parameter("occurrence", occurrence, 1)
+    _validate_integer_parameter("wait", wait, 0)
+
+    # Get all matching Selenium elements.
+    input_kwargs = _build_input_kwargs(parent, kwargs)
+    selenium_webelements = _get_selenium_webelements(
+        parent,
+        input_kwargs,
+        occurrence,
+        wait,
+    )
+
+    # Get the Selenium element if it is in the Selenium elements found or raise
+    # an exception.
+    if len(selenium_webelements) >= occurrence:
+        index = occurrence - 1
+        selenium_webelement = selenium_webelements[index]
+    else:
+        _raise_no_such_element_error("Input", kwargs, occurrence)
+
+    # If the finder type is 'label', selenium_webelement corresponds to a label
+    # for which the matching input must be found.
+    finder_type, _ = list(kwargs.items())[0]
+    if finder_type == "label":
+        input_id = selenium_webelement.get_attribute("for")
+        try:
+            input_element = parent.get_element(id=input_id, wait=0)
+        except exceptions.NoSuchElementError:
+            _raise_no_such_element_error("Input", kwargs, occurrence)
+        selenium_webelement = input_element.selenium_webelement
+
+    return _create_element(parent, selenium_webelement)
+
+
 def _build_button_kwargs(parent, kwargs):
     """Make an dictionary containing an xpath expression to find a button.
 
@@ -226,6 +299,37 @@ def _build_button_kwargs(parent, kwargs):
         )
     elif finder_type == "type":
         xpath = "{}button[@type='{}']".format(prefix, finder_value)
+
+    return {"xpath": xpath}
+
+
+def _build_input_kwargs(parent, kwargs):
+    """Make an dictionary containing an xpath expression to find an input.
+
+    Parameters
+    ----------
+    parent : browser or element
+        The browser or element.
+    kwargs
+        Keyword arguments.
+
+    Returns
+    -------
+    dict
+        A dict in the form {"xpath": <xpath_expression>}.
+
+    """
+    prefix = _build_xpath_prefix(parent)
+    finder_type, finder_value = list(kwargs.items())[0]
+
+    if finder_type == "class_name":
+        xpath = "{}input[@class='{}']".format(prefix, finder_value)
+    elif finder_type == "id":
+        xpath = "{}input[@id='{}']".format(prefix, finder_value)
+    elif finder_type == "label":
+        xpath = "{}label[text()='{}']".format(prefix, finder_value)
+    elif finder_type == "placeholder":
+        xpath = "{}input[@placeholder='{}']".format(prefix, finder_value)
 
     return {"xpath": xpath}
 
