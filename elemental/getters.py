@@ -13,6 +13,7 @@ FINDER_KEYS = [
     "partial_text",
     "tag",
     "text",
+    "type",
     "xpath",
 ]
 
@@ -35,7 +36,7 @@ def get_element(parent, occurrence=1, wait=5, **kwargs):
     **kwargs
         One and only one keyword argument must be supplied. Allowed keys are:
         "class_name", "css", "id", "link_text", "name", "partial_link_text",
-        "partial_text", "tag", "text", "xpath".
+        "partial_text", "tag", "text", "type", "xpath".
 
     Returns
     -------
@@ -98,7 +99,7 @@ def get_elements(parent, min_elements=1, wait=5, **kwargs):
     **kwargs
         One and only one keyword argument must be supplied. Allowed keys are:
         "class_name", "css", "id", "link_text", "name", "partial_link_text",
-        "partial_text", "tag", "text", "xpath".
+        "partial_text", "tag", "text", "type", "xpath".
 
     Returns
     -------
@@ -176,7 +177,7 @@ def _find_with_selenium(parent, finder_type, finder_value):
     # Handle the 'partial_text' and 'text' finder types using xpaths, as they
     # are not built in to Selenium. The xpath expressions ignore the contents
     # of script tags so as to not pick up false positives from JavaScript code.
-    if finder_type in ["partial_text", "text"]:
+    if finder_type in ["partial_text", "text", "type"]:
         prefix = "./" if isinstance(parent, parent.element_class) else "//"
         if finder_type == "partial_text":
             finder_value = (
@@ -188,7 +189,10 @@ def _find_with_selenium(parent, finder_type, finder_value):
                 "{}*[normalize-space(text())='{}'][not(self::script)]"
                 .format(prefix, finder_value)
             )
+        elif finder_type == "type":
+            finder_value = "{}*[@type='{}']".format(prefix, finder_value)
         selenium_find_by = "xpath"
+
     # Translate the 'css' finder type to its Selenium equivalent.
     elif finder_type == "css":
         selenium_find_by = "css selector"

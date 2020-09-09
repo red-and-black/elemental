@@ -53,6 +53,10 @@ class TestGetElement:
         element = browser.get_element(text="Python.org")
         assert element.selenium_webelement.text == "Python.org"
 
+    def test_by_type(self, browser):
+        element = browser.get_element(type="button")
+        assert element.selenium_webelement.text == "Add paragraph"
+
     def test_by_xpath(self, browser):
         element = browser.get_element(xpath="//*[@id='para-2']")
         assert element.selenium_webelement.text == "Paragraph 2"
@@ -106,7 +110,7 @@ class TestGetElementErrors:
         expected = (
             "One parameter from this list is required: class_name, css, id, "
             "link_text, name, partial_link_text, partial_text, tag, text, "
-            "xpath"
+            "type, xpath"
         )
         assert str(error.value) == expected
 
@@ -141,7 +145,7 @@ class TestGetElementErrors:
         expected = (
             "Only one parameter from this list is allowed: class_name, css, "
             "id, link_text, name, partial_link_text, partial_text, tag, text, "
-            "xpath"
+            "type, xpath"
         )
         assert str(error.value) == expected
 

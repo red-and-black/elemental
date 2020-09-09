@@ -20,10 +20,10 @@
       </a>
     </div>
     <br/>
-    <button onclick="addParagraphAfterDelay()">Add paragraph</button>
+    <button type="button" onclick="addParagraph()">Add paragraph</button>
   </body>
   <script>
-    function addParagraphAfterDelay() {
+    function addParagraph() {
       setTimeout(function() {
         var fourthPara = document.createElement("p");
         fourthPara.setAttribute("id", "para-4");
