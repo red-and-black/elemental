@@ -1,8 +1,6 @@
 import pytest
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
 
-from elemental.elemental import Browser
+from elemental import Browser
 
 
 @pytest.fixture(scope="session")
@@ -15,14 +13,9 @@ def browser():
         A browser which wraps a Selenium webdriver.
 
     """
-    # Create and configure the Selenium webdriver.
-    options = Options()
-    options.headless = True
-    driver = webdriver.Firefox(executable_path='geckodriver', options=options)
-
     # Create and yield the browser.
-    _browser = Browser(driver)
+    _browser = Browser(headless=True)
     yield _browser
 
-    # Stop the Selenium webdriver after the tests have finished.
+    # Stop the browser after the tests have finished.
     _browser.quit()

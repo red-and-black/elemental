@@ -1,4 +1,7 @@
 # pylint: disable=missing-function-docstring
+import selenium
+from selenium.webdriver.firefox import options as firefox_options
+
 from elemental import (
     actions,
     getters,
@@ -35,8 +38,12 @@ class Browser(Common):
 
     Parameters
     ----------
-    selenium_webdriver : Selenium webdriver
-        The webdriver being used to drive the browser.
+    selenium_webdriver : Selenium webdriver, optional
+        The webdriver being used to drive the browser. Default is a Firefox
+        WebDriver.
+    headless : bool, optional
+        Whether the default webdriver will run in headless mode. Has no effect
+        if the default webdriver is not used. Default is False.
 
     Attributes
     ----------
@@ -47,9 +54,20 @@ class Browser(Common):
 
     """
 
-    def __init__(self, selenium_webdriver):  # noqa: D107
+    def __init__(self, selenium_webdriver=None, headless=False):  # noqa: D107
         self.element_class = Element
-        self.selenium_webdriver = selenium_webdriver
+        if selenium_webdriver:
+            # If a webdriver is suppied, use it.
+            self.selenium_webdriver = selenium_webdriver
+        else:
+            # Configure and use a Firefox webdriver if no webdriver is
+            # supplied.
+            options = firefox_options.Options()
+            options.headless = headless
+            self.selenium_webdriver = selenium.webdriver.Firefox(
+                executable_path="geckodriver",
+                options=options,
+            )
 
     def quit(self):  # noqa: D102
         actions.quit(self)
