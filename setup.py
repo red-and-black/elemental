@@ -3,7 +3,7 @@ import setuptools
 import elemental
 
 
-with open("README.rst", "r") as f:
+with open("README.rst", "r", encoding="utf-8") as f:
     LONG_DESCRIPTION = f.read()
 
 
