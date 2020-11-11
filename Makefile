@@ -13,7 +13,7 @@ help:
 	@echo "  make install     Install Elemental in editable mode."
 	@echo "  make lint        Lint the code."
 	@echo "  make package     Build the package."
-	@echo "  make push        Push the master branch to the repo."
+	@echo "  make push        Push the main branch to the repo."
 	@echo "  make release     Release to PyPI."
 	@echo "  make tag         Make the Git tag for the release."
 	@echo "  make test        Run the tests in the development environment."
@@ -53,8 +53,8 @@ publish:
 	@twine upload dist/*
 
 push:
-	@git checkout master
-	@git push origin master
+	@git checkout main
+	@git push origin main
 	@git push origin v`python setup.py --version`
 
 release:
