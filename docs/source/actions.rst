@@ -112,10 +112,11 @@ target element in a selected state, no matter whether it was already selected.
 *Returns*
   :class:`None`
 
-*Example*
+*Examples*
   .. code-block:: python
 
      >>> browser.get_element(id="my_radio_button").select()
+     >>> browser.get_element(id="selector_id").get_element(text="option_text").select()
 
 
 uncheck
@@ -138,7 +139,7 @@ matter whether it was checked or unchecked when the action was performed.
 visit
 -----
 .. function::
-  visit()
+  visit(url)
 
 Visits a url in the browser.
 

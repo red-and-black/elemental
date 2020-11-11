@@ -8,7 +8,7 @@ boolean.
 
 attribute
 ---------
-.. function::
+.. attribute::
   attribute(attribute_name)
 
 Gets the value of an attribute.
@@ -32,8 +32,8 @@ Gets the value of an attribute.
 
 html
 -----
-.. function::
-  html()
+.. attribute::
+  html
 
 Gets the html for an element or whole page.
 
@@ -49,8 +49,8 @@ Gets the html for an element or whole page.
 
 text
 ----
-.. function::
-  text()
+.. attribute::
+  text
 
 Gets the text of an element.
 
@@ -66,8 +66,8 @@ Gets the text of an element.
 
 title
 -----
-.. function::
-  title()
+.. attribute::
+  title
 
 Gets the title of a page.
 
@@ -77,14 +77,14 @@ Gets the title of a page.
 *Example*
   .. code-block:: python
 
-     >>> browser.title()
+     >>> browser.title
      "A Page Title"
 
 
 url
 ---
-.. function::
-  url()
+.. attribute::
+  url
 
 Gets the url of a page.
 
@@ -94,5 +94,5 @@ Gets the url of a page.
 *Example*
   .. code-block:: python
 
-     >>> browser.url()
+     >>> browser.url
      "https://redandblack.io"

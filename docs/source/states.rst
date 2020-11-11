@@ -9,7 +9,7 @@ These functions operate on an element, and return a boolean.
 
 is_displayed
 ------------
-.. function::
+.. attribute::
   is_displayed
 
 Determines whether an element is displayed to the user.
@@ -33,7 +33,7 @@ Determines whether an element is displayed to the user.
 
 is_enabled
 ----------
-.. function::
+.. attribute::
   is_enabled
 
 Determines whether an element is enabled or disabled.
@@ -52,7 +52,7 @@ Determines whether an element is enabled or disabled.
 
 is_selected
 -----------
-.. function::
+.. attribute::
   is_selected
 
 Determines whether a radio button, checkbox or select option is selected.
