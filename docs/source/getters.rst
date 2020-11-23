@@ -62,7 +62,7 @@ Gets any element.
   :kwargs:
     One and only one keyword argument must be supplied. Allowed keys are:
     "class_name", "css", "id", "link_text", "name", "partial_link_text",
-    "partial_text", "tag", "text", "type", "xpath".
+    "partial_text", "tag", "text", "type", "value", "xpath".
 
 *Returns*
   :class:`element`
@@ -80,6 +80,7 @@ Gets any element.
      >>> browser.get_element(tag="a")
      >>> browser.get_element(text="Some text")
      >>> browser.get_element(type="button")
+     >>> browser.get_element(value="Sometext")
      >>> browser.get_element(xpath="//*[@id='para-2']")
      >>> browser.get_element(tag="div").get_element(id="primary")
 
@@ -104,7 +105,7 @@ Gets a list of elements.
   :kwargs:
     One and only one keyword argument must be supplied. Allowed keys are:
     "class_name", "css", "id", "link_text", "name", "partial_link_text",
-    "partial_text", "tag", "text", "type", "xpath".
+    "partial_text", "tag", "text", "type", "value", "xpath".
 
 *Returns*
   :class:`list of elements`
@@ -122,6 +123,7 @@ Gets a list of elements.
      >>> browser.get_elements(tag="p", min_elements=5, wait=0)
      >>> browser.get_elements(text="Python.org")
      >>> browser.get_elements(type="button")
+     >>> browser.get_elements(value="Sometext")
      >>> browser.get_elements(xpath="//*[@class='para']")
      >>> browser.get_element(class_name="container").get_elements(tag="p")
 
@@ -175,3 +177,4 @@ you want. Note you cannot chain another getter after `get_elements`.
      >>> browser.get_element(tag="div").get_element(id="primary")
      >>> browser.get_element(class_name="container").get_elements(tag="p")
      >>> browser.get_element(tag="form").get_input(label="Full name")
+     >>> browser.get_element(tag="select").get_element(tag="option", occurrence=3)

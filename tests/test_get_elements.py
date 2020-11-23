@@ -63,6 +63,11 @@ class TestGetElements:
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == ["Add paragraph", "Add paragraph (secondary)"]
 
+    def test_by_value(self, browser):
+        elements = browser.get_elements(value="Wallaby")
+        contents = [element.selenium_webelement.text for element in elements]
+        assert contents == ["Wallaby", "Wallaby, again"]
+
     def test_by_xpath(self, browser):
         elements = browser.get_elements(xpath="//*[@class='para']")
         contents = [element.selenium_webelement.text for element in elements]
@@ -141,7 +146,7 @@ class TestGetElementsErrors:
         expected = (
             "One parameter from this list is required: class_name, css, id, "
             "link_text, name, partial_link_text, partial_text, tag, text, "
-            "type, xpath"
+            "type, value, xpath"
         )
         assert str(error.value) == expected
 
@@ -163,7 +168,7 @@ class TestGetElementsErrors:
         expected = (
             "Only one parameter from this list is allowed: class_name, css, "
             "id, link_text, name, partial_link_text, partial_text, tag, text, "
-            "type, xpath"
+            "type, value, xpath"
         )
         assert str(error.value) == expected
 

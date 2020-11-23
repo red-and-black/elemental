@@ -117,6 +117,7 @@ target element in a selected state, no matter whether it was already selected.
 
      >>> browser.get_element(id="my_radio_button").select()
      >>> browser.get_element(id="selector_id").get_element(text="option_text").select()
+     >>> browser.get_element(id="selector_id").get_element(value="option_value").select()
 
 
 uncheck
