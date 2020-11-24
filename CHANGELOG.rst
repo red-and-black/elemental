@@ -3,6 +3,14 @@ Changelog
 =========
 
 
+Unreleased
+----------
+
+Added
+~~~~~
+- Added Python 3.9 support.
+
+
 v0.2.0
 ------
 *24 November 2020*
