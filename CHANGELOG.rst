@@ -3,8 +3,9 @@ Changelog
 =========
 
 
-Unreleased
-----------
+v0.2.0
+------
+*24 November 2020*
 
 Added
 ~~~~~
