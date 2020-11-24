@@ -86,7 +86,7 @@ Build the docs::
 Releasing
 ---------
 
-#. Check out the ``master`` branch.
+#. Check out the ``main`` branch.
 
 #. Ensure ``CHANGELOG.rst`` includes everything to go in the release and is
    committed.
