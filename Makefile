@@ -1,5 +1,5 @@
 ci: lint
-	@tox
+	@tox -p
 
 clean:
 	@rm -rf build/ dist/
