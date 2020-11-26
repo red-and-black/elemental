@@ -3,6 +3,14 @@ Changelog
 =========
 
 
+Unreleased
+----------
+
+Added
+~~~~~
+- Added the get_parent getter.
+
+
 v0.3.1
 ------
 *04 February 2021*

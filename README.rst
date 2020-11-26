@@ -10,7 +10,7 @@ Elemental
 
 Common use-cases missing from Selenium are built into Elemental. *Get an input
 by its label or placeholder*? Can do. *Get a button by its text or type?* Sure.
-*Get the fourth element in a list?* No problem.
+*Get an element's parent?* Yep. *Get the fourth element in a list?* No problem.
 
 **Automatic waiting**
 

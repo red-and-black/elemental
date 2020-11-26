@@ -124,6 +124,9 @@ class Element(Common):
     def fill(self, string):  # noqa: D102
         actions.fill(self, string)
 
+    def get_parent(self):  # noqa: D102
+        return getters.get_parent(self)
+
     @property
     def is_displayed(self):  # noqa: D102
         return states.is_displayed(self)

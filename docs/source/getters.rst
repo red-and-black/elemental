@@ -162,6 +162,25 @@ Gets an input field by class, id, label, or placeholder text.
      >>> browser.get_input(placeholder="Enter your full name")
 
 
+get_parent
+----------
+
+.. function::
+   get_parent()
+
+Gets an element's parent element.
+
+*Returns*
+  :class:`element`
+
+*Examples*
+  .. code-block:: python
+
+     >>> browser.get_button(type="submit").get_parent()
+     >>> browser.get_elements(text="Python.org").get_parent()
+     >>> browser.get_input(label="First name").get_parent()
+
+
 .. _chaining_getters:
 
 Chaining getters

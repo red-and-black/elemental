@@ -1,5 +1,7 @@
 import time
 
+from selenium.common import exceptions as selenium_exceptions
+
 from elemental import exceptions
 
 
@@ -264,6 +266,47 @@ def get_input(parent, occurrence=1, wait=5, **kwargs):
         selenium_webelement = input_element.selenium_webelement
 
     return _create_element(parent, selenium_webelement)
+
+
+def get_parent(child):
+    """Get a the parent element of an element.
+
+    Parameters
+    ----------
+    child : element
+        The element to find the parent element of.
+
+    Returns
+    -------
+    element
+        The parent element packaged in an Elemental element.
+
+    Raises
+    ------
+    NoSuchElementError
+        When the parent element cannot be found.
+
+    """
+    selenium_parent = _get_selenium_parent(child)
+
+    try:
+        selenium_webelement = selenium_parent.find_element(
+            "xpath",
+            "parent::node()",
+        )
+        # If Selenium's find_element doesn't find an element here it doesn't
+        # raise a NoSuchElementException, so instead try to access tag_name
+        # which will raise a StaleElementReferenceException if no element is
+        # found.
+        selenium_webelement.tag_name  # pylint: disable=pointless-statement
+    except selenium_exceptions.StaleElementReferenceException as error:
+        error_msg = (
+            "Parent not found for element: <{}>"
+            .format(selenium_parent.tag_name)
+        )
+        raise exceptions.NoSuchElementError(error_msg) from error
+
+    return _create_element(child, selenium_webelement)
 
 
 def _build_button_kwargs(parent, kwargs):
