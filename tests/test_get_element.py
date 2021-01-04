@@ -41,8 +41,8 @@ class TestGetElement:
         assert actual == "Python Package Index (PyPI)"
 
     def test_by_partial_text(self, browser):
-        element = browser.get_element(partial_text="Paragraph", occurrence=2)
-        assert element.selenium_webelement.text == "Paragraph 2"
+        element = browser.get_element(partial_text="I'm \"Paragraph")
+        assert element.selenium_webelement.text == "I'm \"Paragraph 2\""
 
     def test_by_tag(self, browser):
         element = browser.get_element(tag="a")
@@ -50,8 +50,13 @@ class TestGetElement:
         assert actual == "Python Package Index (PyPI)"
 
     def test_by_text(self, browser):
+        # Test without quotes.
         element = browser.get_element(text="Python.org")
         assert element.selenium_webelement.text == "Python.org"
+
+        # Test with single and double quotes.
+        element = browser.get_element(text="I'm \"Paragraph 2\"")
+        assert element.selenium_webelement.text == "I'm \"Paragraph 2\""
 
     def test_by_type(self, browser):
         element = browser.get_element(type="button")
@@ -63,7 +68,7 @@ class TestGetElement:
 
     def test_by_xpath(self, browser):
         element = browser.get_element(xpath="//*[@id='para-2']")
-        assert element.selenium_webelement.text == "Paragraph 2"
+        assert element.selenium_webelement.text == "I'm \"Paragraph 2\""
 
     def test_chaining(self, browser):
         # Ensure that 'partial_text' finds from the element and not the page

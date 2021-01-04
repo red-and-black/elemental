@@ -22,12 +22,12 @@ class TestGetButton:
         assert element.selenium_webelement.text == "Add paragraph"
 
     def test_by_partial_text(self, browser):
-        element = browser.get_button(partial_text="Add")
-        assert element.selenium_webelement.text == "Add paragraph"
+        element = browser.get_button(partial_text="I'm a paragraph add")
+        assert element.selenium_webelement.text == "I'm a paragraph adder"
 
     def test_by_text(self, browser):
-        element = browser.get_button(text="Add paragraph (secondary)")
-        assert element.selenium_webelement.text == "Add paragraph (secondary)"
+        element = browser.get_button(text="I'm a paragraph adder")
+        assert element.selenium_webelement.text == "I'm a paragraph adder"
 
     def test_by_type(self, browser):
         element = browser.get_button(type="button")
@@ -37,16 +37,16 @@ class TestGetButton:
         # Ensure that the button is found by partial_text from the element and
         # not the page root.
         element = browser.\
-            get_element(class_name="container", occurrence=4).\
+            get_element(class_name="container", occurrence=5).\
             get_button(partial_text="paragraph")
-        assert element.selenium_webelement.text == "Add paragraph (secondary)"
+        assert element.selenium_webelement.text == "I'm a paragraph adder"
 
         # Ensure that the button is found by text from the element and not the
         # page root.
         element = browser.\
-            get_element(class_name="container", occurrence=4).\
-            get_button(text="Add paragraph (secondary)")
-        assert element.selenium_webelement.text == "Add paragraph (secondary)"
+            get_element(class_name="container", occurrence=5).\
+            get_button(text="I'm a paragraph adder")
+        assert element.selenium_webelement.text == "I'm a paragraph adder"
 
     def test_no_waiting(self, browser):
         element = browser.get_button(id="add-button", wait=0)
@@ -54,7 +54,7 @@ class TestGetButton:
 
     def test_occurrence(self, browser):
         element = browser.get_button(partial_text="para", occurrence=2)
-        assert element.selenium_webelement.text == "Add paragraph (secondary)"
+        assert element.selenium_webelement.text == "I'm a paragraph adder"
 
 
 @pytest.mark.usefixtures("test_getters_page")

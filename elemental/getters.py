@@ -284,22 +284,24 @@ def _build_button_kwargs(parent, kwargs):
     """
     prefix = _build_xpath_prefix(parent)
     finder_type, finder_value = list(kwargs.items())[0]
+    sanitised_finder_value = _sanitise_finder_value_for_xpath(finder_value)
 
     if finder_type == "class_name":
-        xpath = "{}button[@class='{}']".format(prefix, finder_value)
+        xpath = "{}button[@class={}]".format(prefix, sanitised_finder_value)
     elif finder_type == "id":
-        xpath = "{}button[@id='{}']".format(prefix, finder_value)
+        xpath = "{}button[@id={}]".format(prefix, sanitised_finder_value)
     elif finder_type == "partial_text":
         xpath = (
-            "{}button[contains(string(), '{}')]".format(prefix, finder_value)
+            "{}button[contains(string(), {})]"
+            .format(prefix, sanitised_finder_value)
         )
     elif finder_type == "text":
         xpath = (
-            "{}button[normalize-space(string())='{}']"
-            .format(prefix, finder_value)
+            "{}button[normalize-space(string())={}]"
+            .format(prefix, sanitised_finder_value)
         )
     elif finder_type == "type":
-        xpath = "{}button[@type='{}']".format(prefix, finder_value)
+        xpath = "{}button[@type={}]".format(prefix, sanitised_finder_value)
 
     return {"xpath": xpath}
 
@@ -322,15 +324,18 @@ def _build_input_kwargs(parent, kwargs):
     """
     prefix = _build_xpath_prefix(parent)
     finder_type, finder_value = list(kwargs.items())[0]
+    sanitised_finder_value = _sanitise_finder_value_for_xpath(finder_value)
 
     if finder_type == "class_name":
-        xpath = "{}input[@class='{}']".format(prefix, finder_value)
+        xpath = "{}input[@class={}]".format(prefix, sanitised_finder_value)
     elif finder_type == "id":
-        xpath = "{}input[@id='{}']".format(prefix, finder_value)
+        xpath = "{}input[@id={}]".format(prefix, sanitised_finder_value)
     elif finder_type == "label":
-        xpath = "{}label[text()='{}']".format(prefix, finder_value)
+        xpath = "{}label[text()={}]".format(prefix, sanitised_finder_value)
     elif finder_type == "placeholder":
-        xpath = "{}input[@placeholder='{}']".format(prefix, finder_value)
+        xpath = (
+            "{}input[@placeholder={}]".format(prefix, sanitised_finder_value)
+        )
 
     return {"xpath": xpath}
 
@@ -399,20 +404,25 @@ def _find_with_selenium(parent, finder_type, finder_value):
     # of script tags so as to not pick up false positives from JavaScript code.
     if finder_type in ["partial_text", "text", "type", "value"]:
         prefix = _build_xpath_prefix(parent)
+        sanitised_finder_value = _sanitise_finder_value_for_xpath(finder_value)
         if finder_type == "partial_text":
             finder_value = (
-                "{}*[contains(text(), '{}')][not(self::script)]"
-                .format(prefix, finder_value)
+                "{}*[contains(text(), {})][not(self::script)]"
+                .format(prefix, sanitised_finder_value)
             )
         elif finder_type == "text":
             finder_value = (
-                "{}*[normalize-space(text())='{}'][not(self::script)]"
-                .format(prefix, finder_value)
+                "{}*[normalize-space(text())={}][not(self::script)]"
+                .format(prefix, sanitised_finder_value)
             )
         elif finder_type == "type":
-            finder_value = "{}*[@type='{}']".format(prefix, finder_value)
+            finder_value = (
+                "{}*[@type={}]".format(prefix, sanitised_finder_value)
+            )
         elif finder_type == "value":
-            finder_value = "{}*[@value='{}']".format(prefix, finder_value)
+            finder_value = (
+                "{}*[@value={}]".format(prefix, sanitised_finder_value)
+            )
         selenium_find_by = "xpath"
 
     # Translate the 'css' finder type to its Selenium equivalent.
@@ -523,6 +533,36 @@ def _raise_no_such_element_error(element_type, kwargs, occurrence):
         error = "{}, occurrence={}".format(error, occurrence)
 
     raise exceptions.NoSuchElementError(error)
+
+
+def _sanitise_finder_value_for_xpath(finder_value):
+    r"""Handle single quotes in finder values before using them with xpath.
+
+    Parameters
+    ----------
+    finder_value : str
+        A string.
+
+    Returns
+    -------
+    str
+        The string formatted as a an xpath concat function if it contains one
+        or more single quotes, otherwise the original string wrapped in single
+        quotes.
+
+    Examples
+    --------
+    >>> _sanitise_finder_value_for_xpath("What's happening here?")
+    'concat(\'What\', "\'", \'s happening here?\')'
+    >>> _sanitise_finder_value_for_xpath("hello")
+    "'hello'"
+
+    """
+    if "'" not in finder_value:
+        return "'{}'".format(finder_value)
+
+    value_with_single_quotes_quoted = finder_value.replace("'", "', \"'\", '")
+    return "concat('{}')".format(value_with_single_quotes_quoted)
 
 
 def _validate_integer_parameter(name, value, min_value):

@@ -16,7 +16,7 @@ class TestGetInput:
     def test_by_class_name(self, browser):
         element = browser.get_input(class_name="input")
         actual = element.selenium_webelement.get_attribute("placeholder")
-        assert actual == "Placeholder 1"
+        assert actual == "I'm Placeholder 1"
 
     def test_by_id(self, browser):
         element = browser.get_input(id="input-2")
@@ -24,14 +24,20 @@ class TestGetInput:
         assert actual == "Placeholder 2"
 
     def test_by_label(self, browser):
+        # Test without quotes.
         element = browser.get_input(label="Input 1")
         actual = element.selenium_webelement.get_attribute("placeholder")
-        assert actual == "Placeholder 1"
+        assert actual == "I'm Placeholder 1"
+
+        # Test with single and double quotes.
+        element = browser.get_input(label="I've read the \"T's & C's\"")
+        actual = element.selenium_webelement.get_attribute("id")
+        assert actual == "input-4"
 
     def test_by_placeholder(self, browser):
-        element = browser.get_input(placeholder="Placeholder 2")
+        element = browser.get_input(placeholder="I'm Placeholder 1")
         actual = element.selenium_webelement.get_attribute("placeholder")
-        assert actual == "Placeholder 2"
+        assert actual == "I'm Placeholder 1"
 
     def test_chaining(self, browser):
         # Ensure that the input is found from the element and not the page
@@ -45,7 +51,7 @@ class TestGetInput:
     def test_no_waiting(self, browser):
         element = browser.get_input(id="input-1", wait=0)
         actual = element.selenium_webelement.get_attribute("placeholder")
-        assert actual == "Placeholder 1"
+        assert actual == "I'm Placeholder 1"
 
     def test_occurrence(self, browser):
         element = browser.get_input(class_name="input", occurrence=2)

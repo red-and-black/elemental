@@ -10,6 +10,10 @@ Added
 ~~~~~
 - Added Python 3.9 support.
 
+Fixed
+~~~~~
+- Stopped single quotes in getter kwargs causing errors.
+
 
 v0.2.0
 ------

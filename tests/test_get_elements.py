@@ -44,24 +44,28 @@ class TestGetElements:
         assert contents == ["Python Package Index (PyPI)", "Python.org"]
 
     def test_by_partial_text(self, browser):
-        elements = browser.get_elements(partial_text="Paragraph")
+        elements = browser.get_elements(partial_text="I'm \"Paragraph")
         contents = [element.selenium_webelement.text for element in elements]
-        assert contents == ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
+        assert contents == ["I'm \"Paragraph 2\""]
 
     def test_by_tag(self, browser):
         elements = browser.get_elements(tag="p")
         contents = [element.selenium_webelement.text for element in elements]
-        assert contents == ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
+        assert contents == [
+            "Paragraph 1",
+            "I'm \"Paragraph 2\"",
+            "Paragraph 3",
+        ]
 
     def test_by_text(self, browser):
-        elements = browser.get_elements(text="Python.org")
+        elements = browser.get_elements(text="I'm \"Paragraph 2\"")
         contents = [element.selenium_webelement.text for element in elements]
-        assert contents == ["Python.org"]
+        assert contents == ["I'm \"Paragraph 2\""]
 
     def test_by_type(self, browser):
         elements = browser.get_elements(type="button")
         contents = [element.selenium_webelement.text for element in elements]
-        assert contents == ["Add paragraph", "Add paragraph (secondary)"]
+        assert contents == ["Add paragraph", "I'm a paragraph adder"]
 
     def test_by_value(self, browser):
         elements = browser.get_elements(value="Wallaby")
@@ -71,7 +75,11 @@ class TestGetElements:
     def test_by_xpath(self, browser):
         elements = browser.get_elements(xpath="//*[@class='para']")
         contents = [element.selenium_webelement.text for element in elements]
-        assert contents == ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
+        assert contents == [
+            "Paragraph 1",
+            "I'm \"Paragraph 2\"",
+            "Paragraph 3",
+        ]
 
     def test_chaining(self, browser):
         # Ensure that 'partial_text' finds from the element and not the page
@@ -92,12 +100,20 @@ class TestGetElements:
     def test_large_min_elements(self, browser):
         elements = browser.get_elements(tag="p", min_elements=5, wait=0)
         contents = [element.selenium_webelement.text for element in elements]
-        assert contents == ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
+        assert contents == [
+            "Paragraph 1",
+            "I'm \"Paragraph 2\"",
+            "Paragraph 3",
+        ]
 
     def test_min_elements(self, browser):
         elements = browser.get_elements(tag="p", min_elements=3)
         contents = [element.selenium_webelement.text for element in elements]
-        assert contents == ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
+        assert contents == [
+            "Paragraph 1",
+            "I'm \"Paragraph 2\"",
+            "Paragraph 3",
+        ]
 
     def test_min_elements_with_wait(self, browser):
         browser.selenium_webdriver.find_element_by_tag_name("button").click()
@@ -105,7 +121,7 @@ class TestGetElements:
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == [
             "Paragraph 1",
-            "Paragraph 2",
+            "I'm \"Paragraph 2\"",
             "Paragraph 3",
             "Paragraph 4",
         ]
