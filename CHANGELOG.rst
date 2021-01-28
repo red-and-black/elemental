@@ -3,8 +3,9 @@ Changelog
 =========
 
 
-Unreleased
-----------
+v0.3.0
+------
+*29 January 2021*
 
 Added
 ~~~~~

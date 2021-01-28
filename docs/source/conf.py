@@ -22,7 +22,7 @@ copyright = '2020, Keira & Sky'
 author = 'Keira & Sky'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.0'
+release = '0.3.0'
 
 
 # -- General configuration ---------------------------------------------------
