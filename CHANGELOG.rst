@@ -8,6 +8,7 @@ Unreleased
 
 Fixed
 ~~~~~
+- Handle nested elements in input labels.
 - Stopped getters backed by xpath only finding immediate children.
 
 

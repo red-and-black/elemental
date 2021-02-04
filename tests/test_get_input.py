@@ -40,6 +40,13 @@ class TestGetInput:
         actual = element.selenium_webelement.get_attribute("id")
         assert actual == "input-5"
 
+        # Test for a label containing a nested element.
+        element = browser.get_input(
+            label="Checkbox with nested element in label",
+        )
+        actual = element.selenium_webelement.get_attribute("id")
+        assert actual == "input-6"
+
     def test_by_placeholder(self, browser):
         element = browser.get_input(placeholder="I'm Placeholder 1")
         actual = element.selenium_webelement.get_attribute("placeholder")

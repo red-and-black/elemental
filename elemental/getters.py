@@ -331,7 +331,10 @@ def _build_input_kwargs(parent, kwargs):
     elif finder_type == "id":
         xpath = "{}input[@id={}]".format(prefix, sanitised_finder_value)
     elif finder_type == "label":
-        xpath = "{}label[text()={}]".format(prefix, sanitised_finder_value)
+        xpath = (
+            "{}label[normalize-space(string())={}]"
+            .format(prefix, sanitised_finder_value)
+        )
     elif finder_type == "placeholder":
         xpath = (
             "{}input[@placeholder={}]".format(prefix, sanitised_finder_value)
