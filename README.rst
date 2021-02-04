@@ -120,7 +120,25 @@ Releasing
     $ make push
     $ make clean
 
-#. Create a GitHub release.
+#. Create a GitHub release:
+
+    #. Go to https://github.com/red-and-black/elemental.
+    #. Click on **Releases**.
+    #. Click the **Draft a new release** button.
+    #. Enter this release's tag in the **Tag version** field.
+    #. Click the **Publish release** button.
+
+#. Update the documentation at Read the Docs:
+
+    #. Go to https://readthedocs.org/projects/elemental/.
+    #. Click the **Versions** top menu button.
+    #. Under **Activate a version**, find this release's tag.
+    #. Click its **Activate** button.
+    #. Select **Active** then click the **Save** button.
+    #. Click the **Admin** top menu button.
+    #. Click the **Advanced Settings** left menu button.
+    #. Select this release's tag in the **Default version** field.
+    #. Click the **Save** button at the bottom of the page.
 
 
 Code style
