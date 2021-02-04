@@ -34,6 +34,12 @@ class TestGetInput:
         actual = element.selenium_webelement.get_attribute("id")
         assert actual == "input-4"
 
+        # Test for an input which is not an immediate child.
+        container = browser.get_element(class_name="container", occurrence=4)
+        element = container.get_input(label="Nested checkbox")
+        actual = element.selenium_webelement.get_attribute("id")
+        assert actual == "input-5"
+
     def test_by_placeholder(self, browser):
         element = browser.get_input(placeholder="I'm Placeholder 1")
         actual = element.selenium_webelement.get_attribute("placeholder")

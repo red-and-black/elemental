@@ -344,7 +344,7 @@ def _build_xpath_prefix(parent):
     """Make the prefix for an xpath expression.
 
     The prefix of an xpath expression determines whether it operates relative
-    to an element ("./") or the document root ("//").
+    to an element ("descendant::") or the document root ("//").
 
     Parameters
     ----------
@@ -354,10 +354,10 @@ def _build_xpath_prefix(parent):
     Returns
     -------
     Str
-        Either "./" or "//".
+        Either "descendant::" or "//".
 
     """
-    return "./" if isinstance(parent, parent.element_class) else "//"
+    return "descendant::" if isinstance(parent, parent.element_class) else "//"
 
 
 def _create_element(parent, selenium_webelement):

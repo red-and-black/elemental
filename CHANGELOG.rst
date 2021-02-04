@@ -3,6 +3,14 @@ Changelog
 =========
 
 
+Unreleased
+----------
+
+Fixed
+~~~~~
+- Stopped getters backed by xpath only finding immediate children.
+
+
 v0.3.0
 ------
 *29 January 2021*
