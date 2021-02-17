@@ -3,8 +3,9 @@ Changelog
 =========
 
 
-Unreleased
-----------
+v.0.4.0
+-------
+*18 February 2021*
 
 Added
 ~~~~~
