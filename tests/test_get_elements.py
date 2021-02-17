@@ -58,9 +58,15 @@ class TestGetElements:
         ]
 
     def test_by_text(self, browser):
+        # Test with single and double quotes.
         elements = browser.get_elements(text="I'm \"Paragraph 2\"")
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == ["I'm \"Paragraph 2\""]
+
+        # Test with multiple text nodes.
+        elements = browser.get_elements(text="Add paragraph")
+        contents = [element.selenium_webelement.text for element in elements]
+        assert contents == ["Add paragraph"]
 
     def test_by_type(self, browser):
         elements = browser.get_elements(type="button")

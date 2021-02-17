@@ -458,7 +458,7 @@ def _find_with_selenium(parent, finder_type, finder_value):
             )
         elif finder_type == "text":
             finder_value = (
-                "{}*[normalize-space(text())={}][not(self::script)]"
+                "{}*[normalize-space(string())={}][not(self::script)]"
                 .format(prefix, sanitised_finder_value)
             )
         elif finder_type == "type":

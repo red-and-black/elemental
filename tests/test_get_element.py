@@ -58,6 +58,10 @@ class TestGetElement:
         element = browser.get_element(text="I'm \"Paragraph 2\"")
         assert element.selenium_webelement.text == "I'm \"Paragraph 2\""
 
+        # Test with multiple text nodes.
+        element = browser.get_element(text="Add paragraph")
+        assert element.selenium_webelement.text == "Add paragraph"
+
     def test_by_type(self, browser):
         element = browser.get_element(type="button")
         assert element.selenium_webelement.text == "Add paragraph"

@@ -10,6 +10,10 @@ Added
 ~~~~~
 - Added the get_parent getter.
 
+Fixed
+~~~~~
+- Handle multiple text nodes when getting by text.
+
 
 v0.3.1
 ------
