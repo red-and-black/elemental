@@ -28,6 +28,11 @@ Write less code than you would if you were using Selenium directly. The
 Elemental API is terse and internally consistent while still being explicit and
 unambiguous.
 
+**Documented**
+
+The full documentation is at `ReadTheDocs
+<https://elemental.readthedocs.io/en/latest/>_`.
+
 
 The power of Elemental
 ----------------------
