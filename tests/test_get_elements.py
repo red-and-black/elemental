@@ -122,7 +122,7 @@ class TestGetElements:
         ]
 
     def test_min_elements_with_wait(self, browser):
-        browser.selenium_webdriver.find_element_by_tag_name("button").click()
+        browser.selenium_webdriver.find_element("tag name", "button").click()
         elements = browser.get_elements(tag="p", min_elements=4)
         contents = [element.selenium_webelement.text for element in elements]
         assert contents == [

@@ -65,7 +65,6 @@ class Browser(Common):
             options = firefox_options.Options()
             options.headless = headless
             self.selenium_webdriver = selenium.webdriver.Firefox(
-                executable_path="geckodriver",
                 options=options,
             )
 

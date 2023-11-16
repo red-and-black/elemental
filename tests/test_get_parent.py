@@ -36,5 +36,5 @@ class TestGetParentErrors:
     def test_with_kwarg(self, browser):
         with pytest.raises(TypeError) as error:
             browser.get_element(id="select").get_parent(wait=3)
-        expected = "get_parent() got an unexpected keyword argument 'wait'"
+        expected = "Element.get_parent() got an unexpected keyword argument 'wait'"
         assert str(error.value) == expected

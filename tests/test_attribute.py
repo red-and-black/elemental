@@ -39,7 +39,7 @@ class TestAttributeErrors:
     def test_no_parameter(self, browser):
         with pytest.raises(TypeError) as error:
             browser.get_element(tag="p").attribute()
-        expected = "attribute() missing 1 required positional argument"
+        expected = "Element.attribute() missing 1 required positional argument"
         assert str(error.value).startswith(expected)
 
     def test_nonexistent_attribute(self, browser):

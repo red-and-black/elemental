@@ -97,7 +97,7 @@ class TestGetElement:
         assert element.selenium_webelement.text == "Paragraph 3"
 
     def test_waiting(self, browser):
-        browser.selenium_webdriver.find_element_by_tag_name("button").click()
+        browser.selenium_webdriver.find_element("tag name", "button").click()
         element = browser.get_element(id="para-4")
         assert element.selenium_webelement.text == "Paragraph 4"
 
